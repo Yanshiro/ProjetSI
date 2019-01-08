@@ -11,7 +11,7 @@ class Database
 	private $db_user;
 	private $bdd;
 
-	function __construct($db_name = 'pwebc', $db_user = 'root', $db_pass = "", $db_host = 'localhost')
+	function __construct($db_name = 'projetsi6', $db_user = 'root', $db_pass = "", $db_host = 'localhost')
 	{
 		$this->db_name = $db_name;
 		$this->db_user = $db_user;
