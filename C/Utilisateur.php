@@ -1,4 +1,5 @@
 <?php
+include "M/Utilisateur.php";
 
 function verifConnection()
 {
@@ -12,18 +13,21 @@ function verifConnection()
     }
 }
 
-
 function connexion($paramGet, $paramPost)
 {
-    $login = $paramPost["login"];
-    $mdp = $paramPost["mdp"];
-    $m = new Utilisateur();
-    $existe = $m->existUser($login, $mdp);
-    if ($existe) {
-        $_SESSION['Auth'] = $existe;
-        echo true;
-    } else {
-        echo "false";
+    if (isset($paramPost["mdp"]) && isset($paramPost["mdp"]) && !empty($paramPost["mdp"]) && !empty($paramPost["login"])) {
+        $login = $paramPost["login"];
+        $mdp = sha1($paramPost["mdp"]);
+        $m = new Utilisateur();
+        $existe = $m->existUser($login, $mdp);
+        if ($existe) {
+            $_SESSION['Auth'] = $existe;
+            echo true;
+        } else {
+            $_SESSION['err'] = "Problême de connexion";
+            header('Location: index.php');
+            die();
+        }
     }
 }
 

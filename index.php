@@ -33,4 +33,9 @@ if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
 	}
 }
 
+if (isset($_SESSION['err']) && !empty($_SESSION['err'])) {
+	echo ($_SESSION['err']);
+	$_SESSION['err'] = null;
+}
+
 var_dump($_POST);
