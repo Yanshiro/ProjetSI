@@ -1,9 +1,12 @@
 <?php
 include "M/Utilisateur.php";
+include "M/Table.php";
 
 function verifConnection()
 {
     if (isset($_SESSION['Auth']) && !empty($_SESSION['Auth'])) {
+        $tables = new Table();
+        $tables = $tables->getAllTable();
         require "V/index.php";
     } else {
         require "V/connexion.php";
