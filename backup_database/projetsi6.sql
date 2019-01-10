@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.7.1
--- http://www.phpmyadmin.net
+-- version 4.6.4
+-- https://www.phpmyadmin.net/
 --
--- Client :  localhost
--- Généré le :  Mar 08 Janvier 2019 à 11:13
--- Version du serveur :  5.6.20-log
--- Version de PHP :  5.4.31
+-- Client :  127.0.0.1
+-- Généré le :  Jeu 10 Janvier 2019 à 09:35
+-- Version du serveur :  5.7.14
+-- Version de PHP :  7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Base de données :  `projetsi6`
@@ -26,10 +26,17 @@ SET time_zone = "+00:00";
 -- Structure de la table `droit`
 --
 
-CREATE TABLE IF NOT EXISTS `droit` (
-`id` int(11) NOT NULL,
+CREATE TABLE `droit` (
+  `id` int(11) NOT NULL,
   `role` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `droit`
+--
+
+INSERT INTO `droit` (`id`, `role`) VALUES
+(1, 'Aucun');
 
 -- --------------------------------------------------------
 
@@ -37,11 +44,11 @@ CREATE TABLE IF NOT EXISTS `droit` (
 -- Structure de la table `droit_utilisateur`
 --
 
-CREATE TABLE IF NOT EXISTS `droit_utilisateur` (
-`id` int(11) NOT NULL,
+CREATE TABLE `droit_utilisateur` (
+  `id` int(11) NOT NULL,
   `idUtilisateur` int(11) NOT NULL,
   `idRole` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -49,8 +56,8 @@ CREATE TABLE IF NOT EXISTS `droit_utilisateur` (
 -- Structure de la table `enseignant`
 --
 
-CREATE TABLE IF NOT EXISTS `enseignant` (
-`id` int(11) NOT NULL,
+CREATE TABLE `enseignant` (
+  `id` int(11) NOT NULL,
   `nom` varchar(255) NOT NULL,
   `prenom` varchar(255) NOT NULL,
   `cnu` int(11) NOT NULL,
@@ -58,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `enseignant` (
   `find_stat` int(11) NOT NULL,
   `telephone` varchar(14) DEFAULT NULL,
   `email` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -66,15 +73,15 @@ CREATE TABLE IF NOT EXISTS `enseignant` (
 -- Structure de la table `etudiant`
 --
 
-CREATE TABLE IF NOT EXISTS `etudiant` (
-`id` int(11) NOT NULL,
+CREATE TABLE `etudiant` (
+  `id` int(11) NOT NULL,
   `nom` varchar(100) NOT NULL,
   `prenom` varchar(100) NOT NULL,
   `entreprise` varchar(100) NOT NULL,
   `niveau` varchar(100) NOT NULL,
   `groupe` int(10) NOT NULL,
   `id_enseignant` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -82,11 +89,11 @@ CREATE TABLE IF NOT EXISTS `etudiant` (
 -- Structure de la table `pseudo`
 --
 
-CREATE TABLE IF NOT EXISTS `pseudo` (
-`id` int(11) NOT NULL,
+CREATE TABLE `pseudo` (
+  `id` int(11) NOT NULL,
   `alias` varchar(255) NOT NULL,
   `id_enseignant` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -94,12 +101,24 @@ CREATE TABLE IF NOT EXISTS `pseudo` (
 -- Structure de la table `table`
 --
 
-CREATE TABLE IF NOT EXISTS `table` (
-`id` int(11) NOT NULL,
+CREATE TABLE `table` (
+  `id` int(11) NOT NULL,
   `table` varchar(255) NOT NULL,
   `tableSysteme` tinyint(1) NOT NULL DEFAULT '0',
   `idDroit` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `table`
+--
+
+INSERT INTO `table` (`id`, `table`, `tableSysteme`, `idDroit`) VALUES
+(1, 'droit', 0, 1),
+(2, 'etudiant', 0, 1),
+(3, 'droit_utilisateur', 1, 1),
+(4, 'pseudo', 1, 1),
+(5, 'enseignant', 1, 1),
+(6, 'utilisateur', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -107,11 +126,18 @@ CREATE TABLE IF NOT EXISTS `table` (
 -- Structure de la table `utilisateur`
 --
 
-CREATE TABLE IF NOT EXISTS `utilisateur` (
-`id` int(11) NOT NULL,
+CREATE TABLE `utilisateur` (
+  `id` int(11) NOT NULL,
   `login` varchar(255) NOT NULL,
   `mdp` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `utilisateur`
+--
+
+INSERT INTO `utilisateur` (`id`, `login`, `mdp`) VALUES
+(2, 'hugo', '3faf7ed52fa83d583fc670a96bcf92da270d0767');
 
 --
 -- Index pour les tables exportées
@@ -121,43 +147,44 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
 -- Index pour la table `droit`
 --
 ALTER TABLE `droit`
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `role` (`role`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `role` (`role`);
 
 --
 -- Index pour la table `droit_utilisateur`
 --
 ALTER TABLE `droit_utilisateur`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `enseignant`
 --
 ALTER TABLE `enseignant`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `etudiant`
 --
 ALTER TABLE `etudiant`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `pseudo`
 --
 ALTER TABLE `pseudo`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `table`
 --
 ALTER TABLE `table`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT pour les tables exportées
@@ -167,37 +194,37 @@ ALTER TABLE `utilisateur`
 -- AUTO_INCREMENT pour la table `droit`
 --
 ALTER TABLE `droit`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT pour la table `droit_utilisateur`
 --
 ALTER TABLE `droit_utilisateur`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pour la table `enseignant`
 --
 ALTER TABLE `enseignant`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pour la table `etudiant`
 --
 ALTER TABLE `etudiant`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pour la table `pseudo`
 --
 ALTER TABLE `pseudo`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pour la table `table`
 --
 ALTER TABLE `table`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
