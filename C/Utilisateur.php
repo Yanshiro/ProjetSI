@@ -4,10 +4,7 @@ include "M/Utilisateur.php";
 function verifConnection()
 {
     if (isset($_SESSION['Auth']) && !empty($_SESSION['Auth'])) {
-        $Vol = new Vol();
-        $vols = $Vol->selectVol();
-        $avions = $Vol->getListeAvion();
-        require "V/map.php";
+        require "V/index.php";
     } else {
         require "V/connexion.php";
     }
@@ -22,12 +19,11 @@ function connexion($paramGet, $paramPost)
         $existe = $m->existUser($login, $mdp);
         if ($existe) {
             $_SESSION['Auth'] = $existe;
-            echo true;
         } else {
             $_SESSION['err'] = "Problême de connexion";
-            header('Location: index.php');
-            die();
         }
+
+        header('Location: index.php');
     }
 }
 

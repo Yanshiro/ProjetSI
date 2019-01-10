@@ -13,10 +13,9 @@ class Utilisateur
 		$req = $this->bdd->prepare("SELECT * FROM utilisateur WHERE login = ? AND mdp = ?");
 		$req->execute(array($login, $mdp));
 		if ($req->rowCount() == 1) {
-			return $req->fetch();
+			return $req->fetch(PDO::FETCH_OBJ);
 		} else {
 			return false;
 		}
 	}
-
 }

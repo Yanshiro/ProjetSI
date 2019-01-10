@@ -7,7 +7,7 @@
             <input type="text" class="hide" name="f" value="connexion">
             <input type="text" placeholder="login" name="login">
             <input type="password" placeholder="mdp" name="mdp">
-            <button>Vlider</button>
+            <button>Valider</button>
         </form>
     </div>
 </div>
