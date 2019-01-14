@@ -12,14 +12,16 @@ if(isset($_FILES['excel']))
     $excelObj = $excelReader->load($tmpfname);
     $worksheet = $excelObj->getSheet(0);
     $lastRow = $worksheet->getHighestRow();
-    
+    $lastCol = $worksheet->getHighestColumn();
+    $colNumber = PHPExcel_Cell::columnIndexFromString($lastCol);
     echo "<table>";
-    for ($row = 1; $row <= $lastRow; $row++) {
-         echo "<tr><td>";
-         echo $worksheet->getCell('A'.$row)->getValue();
-         echo "</td><td>";
-         echo $worksheet->getCell('B'.$row)->getValue();
-         echo "</td><tr>";
+    for ($row = 1; $row < $lastRow; $row++) {
+        for($cell = 1;$cell<$colNumber;$cell++)
+        {
+        echo "<tr><td>";
+        echo $worksheet->getCellByColumnAndRow($row, $cell)->getValue();  
+        echo "</td><td>";
+        }
     }
     echo "</table>";	
 }
