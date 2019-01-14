@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  127.0.0.1
--- Généré le :  Jeu 10 Janvier 2019 à 09:35
+-- Généré le :  Lun 14 Janvier 2019 à 11:18
 -- Version du serveur :  5.7.14
 -- Version de PHP :  7.2.10
 
@@ -106,7 +106,7 @@ CREATE TABLE `table` (
   `table` varchar(255) NOT NULL,
   `tableSysteme` tinyint(1) NOT NULL DEFAULT '0',
   `idDroit` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='logicielTable';
 
 --
 -- Contenu de la table `table`
