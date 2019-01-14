@@ -20,8 +20,8 @@ class Table
      */
     public function getColumns($tableName)
     {
-        $req = $this->bdd->prepare("SHOW COLUMNS FROM" . $tableName);
+        $req = $this->bdd->prepare("SHOW COLUMNS FROM " . $tableName);
         $req->execute();
-        return $req->etchAll(PDO::FETCH_OBJ);
+        return $req->fetchAll(PDO::FETCH_OBJ);
     }
 }

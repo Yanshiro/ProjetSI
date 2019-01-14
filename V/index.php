@@ -17,7 +17,7 @@ include 'V/lib/navConnect.php';
             </thead>
             <tbody>
                 <?php
-                foreach ($tables as $table) {
+                foreach ($_SESSION["tables"] as $table) {
                     ?>
                 <tr>
                     <td>
@@ -27,7 +27,7 @@ include 'V/lib/navConnect.php';
                         <?= $table->tableSysteme == 1 ? 'oui' : 'non' ?>
                     </td>
                     <td>
-                        <a href="index.php?controller=table&f=structure&table=<?= $table->table ?>" class="btn green">voir
+                        <a href="index.php?controller=table&f=afficheStructure&table=<?= $table->table ?>" class="btn green">voir
                             la structure</a>
                         <a href="index.php?controller=table&f=addData&table=<?= $table->table ?>" class="btn blue">ajouter
                             données</a>

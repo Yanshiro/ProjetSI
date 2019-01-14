@@ -4,7 +4,7 @@
             <?= $_SESSION['Auth']->login ?> </a>
         <ul id="nav-mobile" class="left hide-on-med-and-down">
             <?php 
-            foreach ($tables as $table) { ?>
+            foreach ($_SESSION["tables"] as $table) { ?>
             <li><a href="#">
                     <?= ucfirst($table->table) ?></a></li>
             <?php
