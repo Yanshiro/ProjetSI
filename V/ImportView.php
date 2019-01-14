@@ -11,7 +11,9 @@
 <body>
 <h1 class="titre">Import fichier csv</h1><hr class="hr1">
 <div class="container">
-    <form class="form-horizontal" method="post" action="../C/Import.php" enctype="multipart/form-data">
+    <form class="form-horizontal" method="POST" action="" enctype="multipart/form-data">
+        <input name="controller" value="Import" type="hidden"/> 
+        <input name="f" value="importExcel" type="hidden"/> 
         <div class="form-group">
             <div class="col-md-1"></div>
                 <label class="col-md-4 control-label">
@@ -24,8 +26,10 @@
         <div class="col-md-1"></div>
                 <label class="col-md-4 control-label"></label>
                 <div class="col-md-3">
-                    <input type="submit" class="form-control"/>                
+                    <input type="submit" value="Submit" class="form-control"/>                
                 </div>
 </div>
     </form>
 </div>
+</body>
+</html>

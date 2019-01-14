@@ -2,9 +2,7 @@
 session_start();
 include "lib/Database.php";
 /*require "V/map.php";*/
-?>
-<a class="navbar-brand" href="ImportView.php">aa</a>
-<?php
+
 if(!isset($_POST["controller"]) && empty($_POST['controller']) && !isset($_GET["controller"]) && empty($_GET["controller"])){
 	$_POST['controller'] = "Utilisateur";
 	$_POST['f'] = "verifConnection"; 
