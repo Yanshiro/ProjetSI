@@ -4,40 +4,42 @@ session_start();
 include "lib/Database.php";
 
 if (!isset($_POST["controller"]) && empty($_POST['controller']) && !isset($_GET["controller"]) && empty($_GET["controller"])) {
-	$_POST['controller'] = "Utilisateur";
-	$_POST['f'] = "verifConnection";
+	$_POST['controller'] = "UtilisateurController";
+	$_POST['f'] = "ifConnexion";
 }
 
 if (isset($_POST["controller"]) && !empty($_POST['controller'])) {
-	if (file_exists("C/" . $_POST["controller"] . ".php")) {
-		require "C/" . $_POST["controller"] . ".php";
-		if (function_exists($_POST["f"])) {
-			$_POST["f"]($_GET, $_POST);
-		} else {
-			echo "probleme fonction";
-		}
-	} else {
-		echo "probleme controller";
-	}
+	orientationController($_POST, $_GET, $_POST);
+
 }
 
 if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
-	if (file_exists("C/" . $_GET["controller"] . ".php")) {
-		require "C/" . $_GET["controller"] . ".php";
-		if (function_exists($_GET["f"])) {
-			$_GET["f"]($_GET, $_POST);
-		} else {
-			echo "probleme fonction";
-		}
-	} else {
-		echo "probleme controller";
-	}
+	orientationController($_GET, $_GET, $_POST);
 }
 
-if (isset($_SESSION['err']) && !empty($_SESSION['err'])) {
-	echo ($_SESSION['err']);
-	$_SESSION['err'] = null;
-	die();
+function orientationController($param, $get, $post)
+{
+	if (isset($param["controller"]) && !empty($param['controller'])) {
+		if (file_exists("C/" . $param["controller"] . ".php")) {
+			require "C/" . $param["controller"] . ".php";
+			if (class_exists($param['controller'])) {
+				$classe = new $param['controller']();
+				if (method_exists($classe, $param['f'])) {
+					$classe->{$param['f']}($get, $post);
+				} else {
+					echo "erreur methode inconnu " . $param['f'];
+				}
+			} else {
+				echo "erreur classe du controller inconnue" . $param['controller'];
+			}
+		}
+	}
+
+	if (isset($_SESSION['err']) && !empty($_SESSION['err'])) {
+		echo ($_SESSION['err']);
+		$_SESSION['err'] = null;
+		die();
+	}
 }
 
 var_dump($_POST);
