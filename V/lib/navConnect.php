@@ -5,12 +5,12 @@
         <ul id="nav-mobile" class="left hide-on-med-and-down">
             <?php 
             foreach ($_SESSION["tables"] as $table) { ?>
-            <li><a href="#">
+            <li><a href="">
                     <?= ucfirst($table->table) ?></a></li>
             <?php
 
         } ?>
-            <li><a href="index.php?controller=Utilisateur&f=deconnexion">Deconnexion</a></li>
+            <li><a href="index.php?controller=UtilisateurController&f=deconnexion">Deconnexion</a></li>
         </ul>
     </div>
 </nav>

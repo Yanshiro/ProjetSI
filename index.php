@@ -5,7 +5,7 @@ include "lib/Database.php";
 
 if (!isset($_POST["controller"]) && empty($_POST['controller']) && !isset($_GET["controller"]) && empty($_GET["controller"])) {
 	$_POST['controller'] = "UtilisateurController";
-	$_POST['f'] = "ifConnexion";
+	$_POST['f'] = "verifConnection";
 }
 
 if (isset($_POST["controller"]) && !empty($_POST['controller'])) {

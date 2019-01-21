@@ -27,9 +27,10 @@ include 'V/lib/navConnect.php';
                         <?= $table->tableSysteme == 1 ? 'oui' : 'non' ?>
                     </td>
                     <td>
-                        <a href="index.php?controller=table&f=afficheStructure&table=<?= $table->table ?>" class="btn green">voir
+                        <a href="index.php?controller=tableController&f=afficheStructure&table=<?= $table->table ?>"
+                            class="btn green">voir
                             la structure</a>
-                        <a href="index.php?controller=table&f=addData&table=<?= $table->table ?>" class="btn blue">ajouter
+                        <a href="index.php?controller=tableController&f=addData&table=<?= $table->table ?>" class="btn blue">ajouter
                             données</a>
                     </td>
                 </tr>

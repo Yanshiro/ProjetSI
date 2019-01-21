@@ -6,7 +6,7 @@ class UtilisateurController
 {
     public function verifConnection()
     {
-        if (ifConnexion()) {
+        if ($this->ifConnexion()) {
             require "V/index.php";
         }
     }
