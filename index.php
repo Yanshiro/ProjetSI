@@ -1,12 +1,13 @@
 <?php
 //3faf7ed52fa83d583fc670a96bcf92da270d0767 
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 session_start();
-include "lib/Database.php";
 
-if (!isset($_POST["controller"]) && empty($_POST['controller']) && !isset($_GET["controller"]) && empty($_GET["controller"])) {
-	$_POST['controller'] = "UtilisateurController";
-	$_POST['f'] = "ifConnexion";
-}
+include "lib/Database.php";
+sleep(1);
+// var_dump($_POST);
+// var_dump($_GET);
 
 if (isset($_POST["controller"]) && !empty($_POST['controller'])) {
 	orientationController($_POST, $_GET, $_POST);
@@ -34,13 +35,4 @@ function orientationController($param, $get, $post)
 			}
 		}
 	}
-
-	if (isset($_SESSION['err']) && !empty($_SESSION['err'])) {
-		echo ($_SESSION['err']);
-		$_SESSION['err'] = null;
-		die();
-	}
 }
-
-var_dump($_POST);
-var_dump($_GET);
