@@ -25,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="table in tables">
+        <tr v-for="table in tables" :key="table.id">
           <td>{{table.id}}</td>
           <td>{{table.table}}</td>
           <td>

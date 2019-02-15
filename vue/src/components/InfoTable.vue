@@ -1,6 +1,6 @@
 <template>
   <div id="InfoTable" class="col-12">
-    <div>
+    <div class="navInfoTable">
       <h2>Info sur la table : {{$route.params.table}}</h2>
       <MessageErreur :message="messageErreur"></MessageErreur>
       <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -58,12 +58,6 @@ export default {
     structureTable: Object
   },
   methods: {
-    show() {
-      this.$modal.show(this.nameModal);
-    },
-    hide() {
-      this.$modal.hide(this.nameModal);
-    },
     ajouterDesDonnees() {
       this.ajoutDonneesActive = this.navActive;
       this.DonneesActive = this.navDesactive;
@@ -83,5 +77,12 @@ export default {
 };
 </script>
 
-<style lang="">
+<style>
+.navInfoTable {
+  margin-bottom: 4em;
+}
+.titreModal {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
 </style>

@@ -25,7 +25,7 @@ export default {
     message: String
   },
   methods: {
-    suppertionMessage(event) {
+    suppertionMessage() {
       this.$parent.messageErreur = "";
     }
   }
