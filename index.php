@@ -26,7 +26,12 @@ function orientationController($param, $get, $post)
 			if (class_exists($param['controller'])) {
 				$classe = new $param['controller']();
 				if (method_exists($classe, $param['f'])) {
-					$classe->{$param['f']}($get, $post);
+					try {
+						$classe->{$param['f']}($get, $post);
+					} catch (Exception $e) {
+						echo $e->getMessage();
+						header("La syntaxe de la requête est erronée.", true, 400);
+					}
 				} else {
 					echo "erreur methode inconnu " . $param['f'];
 				}

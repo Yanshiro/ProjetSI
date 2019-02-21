@@ -135,4 +135,12 @@ button {
 .form-inline {
   margin-bottom: 2em;
 }
+
+.table td {
+  text-align: center;
+}
+
+.table th {
+  text-align: center;
+}
 </style>

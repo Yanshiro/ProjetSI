@@ -15,16 +15,11 @@ class TableController
      */
     public function afficheStructure($paramGet, $paramPost)
     {
-        try {
-            if (isset($paramGet["table"]) && !empty($paramGet["table"])) {
-                $structure = $this->table->getColumns($paramGet["table"]);
-                echo json_encode($structure);
-            } else
-                throw new Exception("Table non existant");
-        } catch (Exception $e) {
-            echo $e->getMessage();
-            header("La syntaxe de la requête est erronée.", true, 400);
-        }
+        if (isset($paramGet["table"]) && !empty($paramGet["table"])) {
+            $structure = $this->table->getColumns($paramGet["table"]);
+            echo json_encode($structure);
+        } else
+            throw new Exception("Table non existant");
     }
 
     /***
@@ -42,40 +37,68 @@ class TableController
      */
     public function addTable($paramGet, $paramPost)
     {
-        try {
-            if (isset($paramPost["table"]) && !empty($paramPost['table'])) {
-                $nameTable = htmlspecialchars($paramPost["table"]);
-                echo json_encode($this->table->createTable($nameTable));
-            } else {
-                throw new Exception("Erreur le nom de la table est inconnu");
-            }
-        } catch (Exception $e) {
-
-            echo $e->getMessage();
-            header("La syntaxe de la requête est erronée.", true, 400);
+        if (isset($paramPost["table"]) && !empty($paramPost['table'])) {
+            $nameTable = htmlspecialchars($paramPost["table"]);
+            echo json_encode($this->table->createTable($nameTable));
+        } else {
+            throw new Exception("Erreur le nom de la table est inconnu");
         }
     }
 
     public function deleteTable($paramGet, $paramPost)
     {
-        try {
-            if (isset($paramPost["table"]) && !empty($paramPost["table"])) {
-                $this->table->deleteTable($paramPost["table"]);
+        if (isset($paramPost["table"]) && !empty($paramPost["table"])) {
+            $this->table->deleteTable($paramPost["table"]);
+        } else {
+            throw new Exception("Nom de la table pas définie");
+        }
+    }
+
+    public function addColonneInTable($paramGet, $paramPost)
+    {
+        if (isset($paramPost["table"]) && !empty($paramPost["table"])) {
+            if (isset($paramPost["Column"]) && !empty($paramPost["Column"])
+                && isset($paramPost["Type"]) && !empty($paramPost["Type"])) {
+                $resulte = $this->table->addColonne($paramPost);
+                echo json_encode($resulte);
             } else {
-                throw new Exception("Nom de la table pas définie");
+                throw new Exception("Erreur, des information sont inconnu pour la création d'une colonne");
             }
-        } catch (Exception $e) {
-            echo $e->getMessage();
-            header("La syntaxe de la requête est erronée.", true, 400);
+        } else {
+            throw new Exception("Erreur, table inconnue");
         }
     }
 
     /**
-     * Ajouter des données dans une table
+     * Suprimer un champs d'une table
      */
-    public function addDataTable($paramGet, $paramPost)
+    public function suprimerColonne($paramGet, $paramPost)
     {
-        var_dump($paramGet);
+        if (isset($paramPost["table"]) && !empty($paramPost["table"])
+            && isset($paramPost["Column"]) && !empty($paramPost["Column"])) {
+            $this->table->suprimerChamps($paramPost["table"], $paramPost["Column"]);
+            echo "true";
+        } else {
+            throw new Exception("Erreur, il manque des informations pour supprimer une colonne d'une table");
+        }
     }
 
+    public function getDonnees($paramGet, $paramPost)
+    {
+        if (isset($paramGet["table"]) && !empty($paramGet["table"])) {
+            echo json_encode($this->table->getDataTable($paramGet["table"]));
+        } else {
+            throw new Exception("Table inconnue");
+        }
+    }
+
+    public function deletData($paramGet, $paramPost)
+    {
+        if (isset($paramPost["table"]) && !empty($paramPost["table"])
+            && isset($paramPost["id"]) && !empty($paramPost["id"])) {
+            $this->table->deleteData($paramPost["table"], $paramPost["id"]);
+        } else {
+            throw new Exception("Erreur, information manquante");
+        }
+    }
 }

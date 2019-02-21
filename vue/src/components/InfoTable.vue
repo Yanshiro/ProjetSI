@@ -25,6 +25,7 @@
       </div>
     </div>
     <StructureTable v-if="structureActive == navActive" :table="$route.params.table"></StructureTable>
+    <DonneesTable v-if="DonneesActive == navActive"></DonneesTable>
   </div>
 </template>
 
@@ -34,11 +35,13 @@ import MessageErreur from "./MessageErreur.vue";
 import store from "./../store/store.js";
 import vuex from "vuex";
 import StructureTable from "./StructureTable.vue";
+import DonneesTable from "./DonneesTable";
 export default {
   store,
   components: {
     MessageErreur,
-    StructureTable
+    StructureTable,
+    DonneesTable
   },
   computed: {
     ...vuex.mapGetters(["lodding"])

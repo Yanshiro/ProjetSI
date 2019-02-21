@@ -25,6 +25,9 @@ class Table
         return $req->fetch(PDO::FETCH_OBJ);
     }
 
+    /**
+     * Creation d'une nouvelle table
+     */
     public function createTable($nameTable)
     {
         $nameTable = htmlspecialchars($nameTable);
@@ -47,7 +50,6 @@ class Table
         $req->execute();
         $req = $this->bdd->prepare("DELETE FROM `table` WHERE `table` = ?");
         $req->execute(array($nameTable));
-        $req->execute();
     }
 
     /**
@@ -61,5 +63,81 @@ class Table
             return $req->fetchAll(PDO::FETCH_OBJ);
         }
         throw new Exception("Erreur,la table existe pas");
+    }
+
+    /**
+     * Renvoie la colonne en fonction de la table et de la colonne
+     */
+    public function getColumnByName($tableName, $nameColumns)
+    {
+        if ($this->existTable($tableName)) {
+            $req = $this->bdd->prepare("SHOW COLUMNS FROM " . $tableName . " where FIELD = ?");
+            $req->execute(array($nameColumns));
+            return $req->fetch(PDO::FETCH_OBJ);
+        }
+        throw new Exception("Erreur,la table existe pas");
+    }
+
+    /**
+     * Supprimer un champs d'une table
+     * @param $table : table ou on doit suprimmer la colonne
+     * @param $col : colonne a suprimer 
+     */
+    public function suprimerChamps($table, $col)
+    {
+        if ($this->getColumnByName($table, $col)) {
+            $table = htmlspecialchars($table);
+            $col = htmlspecialchars($col);
+            $req = $this->bdd->prepare("ALTER TABLE " . $table . " DROP COLUMN " . $col);
+            $req->execute();
+        }
+    }
+
+    public function addColonne($TableInfoTable)
+    {
+        $colonne = htmlspecialchars($TableInfoTable["Column"]);
+        $type = htmlspecialchars($TableInfoTable["Type"]);
+        $champsNullable = htmlspecialchars($TableInfoTable["Nullable"]);
+
+        if (strtoupper($champsNullable) != "NOT NULL")
+            $champsNullable = "NULL";
+
+        if (!isset($TableInfoTable["Default"]))
+            $default = "";
+        else
+            $default = " DEFAULT  '" . htmlspecialchars($TableInfoTable["Default"]) . "'";
+
+        $table = htmlspecialchars($TableInfoTable["table"]);
+        if ($this->existTable($table) != false) {
+            $req = $this->bdd->prepare("ALTER TABLE " . $table . " ADD " . $colonne . " " . $type . " " . $champsNullable . " " . $default);
+            $req->execute();
+            return $this->getColumnByName($table, $colonne);
+        } else {
+            throw new Exception("Erreur table inconnue");
+        }
+    }
+
+
+    /***
+     * Recuperation des données d'une table
+     */
+    public function getDataTable($table)
+    {
+        if ($this->existTable($table)) {
+            $req = $this->bdd->prepare("SELECT * FROM " . $table);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_OBJ);
+        }
+        throw new Exception("Erreur table inconnue");
+    }
+
+    public function deleteData($table, $id)
+    {
+        if ($this->existTable($table)) {
+            $req = $this->bdd->prepare("DELETE FROM " . $table . " where id = ? ");
+            $req->execute(array($id));
+        } else {
+            throw new Exception("la table" . $table . "existe pas");
+        }
     }
 }

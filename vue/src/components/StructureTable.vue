@@ -58,22 +58,27 @@
     <table class="table center">
       <thead>
         <tr>
-          <th>Default</th>
-          <th>Extra</th>
           <th>Nom de la colonne</th>
-          <th>Nullable</th>
-          <th>Key</th>
           <th>Type</th>
+          <th>Nullable</th>
+          <th>Default</th>
+          <th>Key</th>
+          <th>Extra</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(col, index) in structureTable" :key="index">
-          <td>{{col.Default}}</td>
-          <td>{{col.Extra}}</td>
           <td>{{col.Field}}</td>
-          <td>{{col.Key}}</td>
-          <td>{{col.Null}}</td>
           <td>{{col.Type}}</td>
+          <td>{{col.Null}}</td>
+          <td>{{col.Default}}</td>
+          <td>{{col.Key}}</td>
+          <td>{{col.Extra}}</td>
+          <td>
+            <button class="btn btn-info">Modification</button>
+            <button class="btn btn-danger" @click="suprimerChamps(col)">Suppression</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -135,12 +140,33 @@ export default {
     addChamps() {
       this.$modal.show(this.nameModal);
     },
+    suprimerChamps(champs) {
+      let data = new FormData();
+      data.append("table", this.$route.params.table);
+      data.append("Column", champs.Field);
+      let url =
+        this.$urlApi + "?controller=" + this.controller + "&f=suprimerColonne";
+      this.$http
+        .post(url, data, {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+          }
+        })
+        .then(response => {
+          if (response.body == "true")
+            this.structureTable.splice(this.structureTable.indexOf(champs), 1);
+        })
+        .catch(error => {
+          this.$parent.messageErreur = error.body;
+        });
+    },
     ValideForm() {
       let data = new FormData();
       data.append("table", this.$route.params.table);
       data.append("Column", this.formAddColonne.colonne);
       data.append("Type", this.formAddColonne.type);
       data.append("Nullable", this.formAddColonne.nullable);
+      data.append("Default", this.formAddColonne.default);
       let url =
         this.$urlApi +
         "?controller=" +
@@ -153,8 +179,8 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data);
-          //this.hideModal();
+          this.structureTable.push(response.data);
+          this.hideModal();
         })
         .catch(error => {
           this.messageErreur = error.body;
