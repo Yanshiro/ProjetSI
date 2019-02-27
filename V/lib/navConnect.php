@@ -5,7 +5,7 @@
         <ul id="nav-mobile" class="left hide-on-med-and-down">
             <?php 
             foreach ($_SESSION["tables"] as $table) { ?>
-            <li><a href="">
+            <li><a href="Controller=TableController&f=vueTable&table=<?= $table->id ?>">
                     <?= ucfirst($table->table) ?></a></li>
             <?php
 
