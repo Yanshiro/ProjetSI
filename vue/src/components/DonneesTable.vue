@@ -17,12 +17,15 @@
         </tr>
       </tbody>
     </table>
+
+    <AjoutDonnees :structureTable="structureTable"></AjoutDonnees>
   </div>
 </template>
 
 
 <script>
 import store from "./../store/store.js";
+import AjoutDonnees from "./AjoutDonnees.vue";
 export default {
   store,
   data() {
@@ -31,6 +34,9 @@ export default {
       structureTable: [],
       controller: "TableController"
     };
+  },
+  components: {
+    AjoutDonnees
   },
   mounted() {
     this.chargementDonneesTable();
