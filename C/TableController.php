@@ -20,7 +20,16 @@ class TableController
             $structure = $this->table->getColumns($paramGet["table"]);
             echo json_encode($structure);
         } else
-        throw new Exception("Table non existant");
+            throw new Exception("Table non existant");
+    }
+
+    public function chargeStructureEtDataEtrangere($paramGet, $paramPost)
+    {
+        if (isset($paramGet["table"]) && !empty($paramGet["table"])) {
+            $structure = $this->table->getColumns($paramGet["table"]);
+            echo json_encode($structure);
+        } else
+            throw new Exception("Table non existant");
     }
 
     /***
@@ -107,5 +116,27 @@ class TableController
         } else {
             throw new Exception("Erreur, information manquante");
         }
+    }
+
+    /***
+     * Recuperation des possibilité de jointure sur une table
+     */
+    public function chargeValueEtranger($paramGet, $paramPost)
+    {
+        $e = [];
+        if (
+            isset($paramPost["table"]) && !empty($paramPost["table"])
+            && isset($paramPost["colonnes"]) && !empty($paramPost["colonnes"])
+        ) {
+            $col = json_decode($paramPost["colonnes"]);
+
+            $cmp = 0;
+            foreach ($col as $colonne) {
+                $e[$cmp] = new stdClass();
+                $e[$cmp]->colonne = $colonne->Field;
+                $e[$cmp]->value =  $this->table->recuperationJointure($paramPost["table"], $colonne->Field);
+            }
+        }
+        echo json_encode($e);
     }
 }

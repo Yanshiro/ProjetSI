@@ -1,6 +1,6 @@
 <template>
   <div id="StructureTable">
-    <modal :name="nameModal" height="80%" width="70%">
+    <modal :adaptive="true" :draggable="true" height="auto" :scrollable="true" :name="nameModal">
       <div class="container">
         <div class="row">
           <div class="col-12 titreModal">
@@ -21,16 +21,48 @@
                 name="Column"
               >
             </div>
+            <!-- Jointure -->
             <div class="form-group">
               <label for>Type autorisé : varchar(255), int, datatype...</label>
-              <input
+              <select
+                name
+                id
                 v-model="formAddColonne.type"
-                type="text"
                 class="form-control"
-                placeholder="Type"
-                name="Type"
+                @click="loadTable()"
               >
+                <option value="int">Int</option>
+                <option value="decimal">decimal</option>
+                <option value="varchar(255)">Chaine de caractere</option>
+                <option value="char">Caractere</option>
+                <option value="date">date</option>
+                <option value="lien">Lien vers une autre table</option>
+              </select>
             </div>
+            <div class="form-group" v-if="formAddColonne.type == 'lien'">
+              <select
+                name="lien"
+                class="form-control"
+                v-model="tableSelectJointure"
+                @click="loadColonne()"
+              >
+                <option
+                  v-for="(table, index) in tableJointure.filter(c => c.table != $route.params.table)"
+                  :key="index"
+                  :value="table.table"
+                >{{table.table}}</option>
+              </select>
+            </div>
+            <div class="form-goup" v-if="formAddColonne.type == 'lien'">
+              <select class="form-control" v-model="colonneSelectJointure">
+                <option
+                  v-for="(colonne, index) in colonneJointure.filter(c => c.Type == 'int(11)')"
+                  :key="index"
+                  :value="colonne.Field"
+                >{{colonne.Field}}</option>
+              </select>
+            </div>
+            <!-- Fin jointure -->
             <div class="form-group">
               <label for>Valeur par default</label>
               <input
@@ -106,11 +138,15 @@ export default {
         type: "",
         nullable: "",
         default: ""
-      }
+      },
+      tableJointure: [],
+      colonneJointure: [],
+      tableSelectJointure: "",
+      colonneSelectJointure: "",
+      messageErreur: ""
     };
   },
   props: {
-    messageErreur: String,
     table: String
   },
   mounted() {
@@ -167,6 +203,9 @@ export default {
       data.append("Type", this.formAddColonne.type);
       data.append("Nullable", this.formAddColonne.nullable);
       data.append("Default", this.formAddColonne.default);
+      data.append("TableJointure", this.tableSelectJointure);
+      data.append("ColonneJointure", this.colonneSelectJointure);
+
       let url =
         this.$urlApi +
         "?controller=" +
@@ -181,6 +220,7 @@ export default {
         .then(response => {
           this.structureTable.push(response.data);
           this.hideModal();
+          this.messageErreur = "";
         })
         .catch(error => {
           this.messageErreur = error.body;
@@ -192,6 +232,43 @@ export default {
       this.formAddColonne.nullable = "";
       this.formAddColonne.default = "";
       this.$modal.hide(this.nameModal);
+    },
+    loadTable() {
+      if (this.formAddColonne.type == "lien") {
+        this.tableJointure = [];
+        let url =
+          this.$urlApi + "?controller=" + this.controller + "&f=getAllTable";
+        this.$http
+          .get(url)
+          .then(response => {
+            this.tableJointure = response.data;
+          })
+          .catch(error => {
+            this.messageErreur = error.body;
+          });
+      }
+    },
+    loadColonne() {
+      this.colonneJointure = [];
+      if (
+        this.formAddColonne.type == "lien" &&
+        this.tableSelectJointure != ""
+      ) {
+        let url =
+          this.$urlApi +
+          "?controller=" +
+          this.controller +
+          "&f=afficheStructure&table=" +
+          this.tableSelectJointure;
+        this.$http
+          .get(url)
+          .then(response => {
+            this.colonneJointure = response.data;
+          })
+          .catch(error => {
+            this.messageErreur = error.body;
+          });
+      }
     }
   }
 };

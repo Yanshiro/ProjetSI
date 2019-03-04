@@ -18,7 +18,7 @@
       </tbody>
     </table>
 
-    <AjoutDonnees :structureTable="structureTable"></AjoutDonnees>
+    <AjoutDonnees :arrayCleEtranger="arrayCleEtranger" :structureTable="structureTable"></AjoutDonnees>
   </div>
 </template>
 
@@ -32,6 +32,7 @@ export default {
     return {
       Data: [],
       structureTable: [],
+      arrayCleEtranger: [],
       controller: "TableController"
     };
   },
@@ -39,10 +40,35 @@ export default {
     AjoutDonnees
   },
   mounted() {
-    this.chargementDonneesTable();
     this.chargementStructureTable();
+    this.chargementDonneesTable();
   },
   methods: {
+    chargementLienTable() {
+      this.arrayCleEtranger = this.structureTable.filter(e => e.Key == "MUL");
+      let url =
+        this.$urlApi +
+        "?controller=" +
+        this.controller +
+        "&f=chargeValueEtranger";
+
+      let data = new FormData();
+      data.append("table", this.$route.params.table);
+      data.append("colonnes", JSON.stringify(this.arrayCleEtranger));
+
+      this.$http
+        .post(url, data, {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+          }
+        })
+        .then(response => {
+          this.arrayCleEtranger = response.data;
+        })
+        .catch(error => {
+          this.messageErreur = error.body;
+        });
+    },
     chargementDonneesTable() {
       store.commit("changeLodding", true);
       this.$http
@@ -75,6 +101,7 @@ export default {
         )
         .then(response => {
           this.structureTable = response.data;
+          this.chargementLienTable();
         })
         .catch(error => {
           this.$parent.messageErreur = error.body;

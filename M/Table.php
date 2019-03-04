@@ -3,6 +3,7 @@
 class Table
 {
     private $bdd;
+    private $SystemeJointure = "SystemeJointure";
     function __construct()
     {
         $this->bdd = new Database();
@@ -85,38 +86,89 @@ class Table
      */
     public function suprimerChamps($table, $col)
     {
-        if ($this->getColumnByName($table, $col)) {
+        $colonne = $this->getColumnByName($table, $col);
+        if ($colonne) {
             $table = htmlspecialchars($table);
             $col = htmlspecialchars($col);
             $req = $this->bdd->prepare("ALTER TABLE " . $table . " DROP COLUMN " . $col);
             $req->execute();
+            if ($colonne->Key = "MUL") {
+                $this->suprimerJointure($table, $col);
+            }
         }
     }
 
+    public function suprimerJointure($table, $col)
+    {
+        $req = $this
+            ->bdd
+            ->prepare(
+                "DELETE FROM " . $this->SystemeJointure . "  
+            WHERE (Table1 = ? and Champ1 = ?) or(Table2 = ? and Champ2 = ?)"
+            );
+        $req->execute(array($table, $col, $table, $col));
+    }
+
+    /**
+     * Ajouter une colonne à une table
+     */
     public function addColonne($TableInfoTable)
     {
         $colonne = htmlspecialchars($TableInfoTable["Column"]);
         $type = htmlspecialchars($TableInfoTable["Type"]);
         $champsNullable = htmlspecialchars($TableInfoTable["Nullable"]);
-
+        $TableJointure = htmlspecialchars($TableInfoTable["TableJointure"]);
+        $ColonneJointure = htmlspecialchars($TableInfoTable["ColonneJointure"]);
+        $isLien = false;
         if (strtoupper($champsNullable) != "NOT NULL")
             $champsNullable = "NULL";
 
-        if (!isset($TableInfoTable["Default"]))
+        if (!isset($TableInfoTable["Default"]) || empty($TableInfoTable["Default"]))
             $default = "";
         else
             $default = " DEFAULT  '" . htmlspecialchars($TableInfoTable["Default"]) . "'";
+
+        if ($type == "lien") {
+            $isLien = true;
+            $type = "int";
+        }
 
         $table = htmlspecialchars($TableInfoTable["table"]);
         if ($this->existTable($table) != false) {
             $req = $this->bdd->prepare("ALTER TABLE " . $table . " ADD " . $colonne . " " . $type . " " . $champsNullable . " " . $default);
             $req->execute();
+            if ($isLien) {
+                $this->addJointure($table, $colonne, $TableJointure, $ColonneJointure);
+            }
             return $this->getColumnByName($table, $colonne);
         } else {
             throw new Exception("Erreur table inconnue");
         }
     }
 
+    /**
+     * Ajoute une jointure dans la base de données
+     */
+    public function addJointure($table1, $champ1, $table2, $champ2)
+    {
+        if ($this->existTable($table1) != false && $this->existTable($table2) != false) {
+            $req = $this
+                ->bdd
+                ->prepare(
+                    "ALTER TABLE " . $table1 . " ADD FOREIGN KEY (" . $champ1 . ") 
+                REFERENCES " . $table2 . " (" . $champ2 . ")"
+                );
+            $req->execute();
+            $req = $this
+                ->bdd
+                ->prepare(
+                    "INSERT INTO " . $this->SystemeJointure .  "(Table1, Champ1, Table2, Champ2) VALUE (?, ?, ?, ?)"
+                );
+            $req->execute(array($table1, $champ1, $table2, $champ2));
+        } else {
+            throw new Exception("Erreur table inconnue");
+        }
+    }
 
     /***
      * Recuperation des données d'une table
@@ -131,6 +183,9 @@ class Table
         throw new Exception("Erreur table inconnue");
     }
 
+    /**
+     * Supression  d'une données
+     */
     public function deleteData($table, $id)
     {
         if ($this->existTable($table)) {
@@ -138,6 +193,33 @@ class Table
             $req->execute(array($id));
         } else {
             throw new Exception("la table" . $table . "existe pas");
+        }
+    }
+
+    /**
+     * Recuperation de toute les jointure pas rapport a un champs
+     */
+    public function recuperationJointure($table, $colonne)
+    {
+        $req = $this->bdd->prepare(
+            "SELECT * FROM " . $this->SystemeJointure .
+                " WHERE(Table1 = ? and Champ1 = ?) or (Table2 = ? and Champ2 = ?)"
+        );
+        $resultat = $req->execute(array($table, $colonne, $table, $colonne));
+        $resultat = $req->fetch(PDO::FETCH_OBJ);
+        if (!empty($resultat)) {
+            if ($resultat->Table1 != $table) {
+                $table = $resultat->Table1;
+                $colonne = $resultat->Champ1;
+            } else {
+                $table = $resultat->Table2;
+                $colonne = $resultat->Champ2;
+            }
+            $req = $this->bdd->prepare("SELECT * FROM " . $table);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_OBJ);
+        } else {
+            throw new Exception("Erreur, lien non trouvé");
         }
     }
 }

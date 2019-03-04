@@ -26,6 +26,7 @@ export default {
   },
   methods: {
     suppertionMessage() {
+      this.message = "";
       this.$parent.messageErreur = "";
     }
   }
