@@ -6,9 +6,6 @@
           <li class="nav-item active">
             <router-link class="nav-link" :to="{name: 'Listetable'}">Liste des tables</router-link>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Ajouter des données</a>
-          </li>
         </ul>
         <form class="form-inline">
           <input
@@ -51,3 +48,6 @@ export default {
   }
 };
 </script>
+
+<style>
+</style>

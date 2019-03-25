@@ -1,6 +1,6 @@
 <template>
   <div id="DonnneesTable">
-    <table class="table center">
+    <table class="table center" v-if="finChargementCleEtranger == true">
       <thead>
         <tr>
           <th v-for="(col, index) in structureTable" :key="index">{{col.Field}}</th>
@@ -8,40 +8,52 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(data, col) in Data" :key="col">
-          <td v-for="(colonne, index) in structureTable" :key="index">{{data[colonne.Field]}}</td>
+        <tr v-for="(dataDonne, col) in data" :key="col">
+          <td v-for="(colonne, index) in structureTable" :key="index">
+            <p v-if="colonne.Key != 'MUL'">{{dataDonne[colonne.Field]}}</p>
+            <p v-else>{{chargeDataEtranger(colonne.Field, dataDonne[colonne.Field])}}</p>
+          </td>
           <td>
             <button class="btn btn-info">Modification</button>
-            <button class="btn btn-danger" @click="suppressionData(data)">Suppression</button>
+            <button class="btn btn-danger" @click="suppressionData(dataDonne)">Suppression</button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <AjoutDonnees :arrayCleEtranger="arrayCleEtranger" :structureTable="structureTable"></AjoutDonnees>
+    <AjoutDonnees
+      v-if="finChargementCleEtranger == true"
+      :arrayCleEtranger="arrayCleEtranger"
+      :structureTable="structureTable"
+    ></AjoutDonnees>
   </div>
 </template>
 
 
 <script>
 import store from "./../store/store.js";
+import vuex from "vuex";
 import AjoutDonnees from "./AjoutDonnees.vue";
+
 export default {
   store,
   data() {
     return {
-      Data: [],
       structureTable: [],
       arrayCleEtranger: [],
-      controller: "TableController"
+      controller: "TableController",
+      finChargementCleEtranger: false
     };
+  },
+  computed: {
+    ...vuex.mapGetters(["data"])
   },
   components: {
     AjoutDonnees
   },
   mounted() {
-    this.chargementStructureTable();
     this.chargementDonneesTable();
+    this.chargementStructureTable();
   },
   methods: {
     chargementLienTable() {
@@ -64,6 +76,7 @@ export default {
         })
         .then(response => {
           this.arrayCleEtranger = response.data;
+          this.finChargementCleEtranger = true;
         })
         .catch(error => {
           this.messageErreur = error.body;
@@ -80,7 +93,7 @@ export default {
             this.$route.params.table
         )
         .then(response => {
-          this.Data = response.data;
+          store.commit("setData", response.data);
         })
         .catch(error => {
           this.$parent.messageErreur = error.body;
@@ -120,11 +133,23 @@ export default {
           data
         )
         .then(() => {
-          this.Data.splice(this.Data.indexOf(colonne), 1);
+          store.commit("removeData", colonne);
         })
         .catch(error => {
           this.$parent.messageErreur = error.body;
         });
+    },
+    /**
+     * Chargement de la valeur table etranger
+     */
+    chargeDataEtranger(colonne, valeur) {
+      let indexTable = this.arrayCleEtranger.filter(
+        e => e.colonne.Champ1 == colonne
+      )[0];
+      let val = indexTable.value.filter(
+        e => e[indexTable.colonne.Champ2] == valeur
+      );
+      return val;
     }
   }
 };

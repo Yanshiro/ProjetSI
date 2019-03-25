@@ -1,0 +1,11 @@
+"{"table":"etudiant",
+    "data":[{
+        "id":"sdfd",
+        "nom":"sdfd",
+        "prenom":"sdfd",
+        "entreprise":"sdfd",
+        "niveau":"sdfd",
+        "groupe":"sdfd",
+        "idEnseignant":"sdfd"
+        }]
+}"

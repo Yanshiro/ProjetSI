@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  127.0.0.1
--- Généré le :  Lun 14 Janvier 2019 à 11:18
+-- Généré le :  Mar 12 Mars 2019 à 13:24
 -- Version du serveur :  5.7.14
 -- Version de PHP :  7.2.10
 
@@ -31,13 +31,6 @@ CREATE TABLE `droit` (
   `role` varchar(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
---
--- Contenu de la table `droit`
---
-
-INSERT INTO `droit` (`id`, `role`) VALUES
-(1, 'Aucun');
-
 -- --------------------------------------------------------
 
 --
@@ -58,14 +51,15 @@ CREATE TABLE `droit_utilisateur` (
 
 CREATE TABLE `enseignant` (
   `id` int(11) NOT NULL,
-  `nom` varchar(255) NOT NULL,
-  `prenom` varchar(255) NOT NULL,
-  `cnu` int(11) NOT NULL,
-  `id_enseignant_exel` int(11) NOT NULL,
-  `find_stat` int(11) NOT NULL,
-  `telephone` varchar(14) DEFAULT NULL,
-  `email` varchar(255) NOT NULL
+  `Nom` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `enseignant`
+--
+
+INSERT INTO `enseignant` (`id`, `Nom`) VALUES
+(1, 'dsss');
 
 -- --------------------------------------------------------
 
@@ -80,8 +74,18 @@ CREATE TABLE `etudiant` (
   `entreprise` varchar(100) NOT NULL,
   `niveau` varchar(100) NOT NULL,
   `groupe` int(10) NOT NULL,
-  `id_enseignant` int(11) NOT NULL
+  `idEnseignant` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `etudiant`
+--
+
+INSERT INTO `etudiant` (`id`, `nom`, `prenom`, `entreprise`, `niveau`, `groupe`, `idEnseignant`) VALUES
+(2, 'qsdqsd', 'qsdsq', 'qzqd', '2', 2, 1),
+(16, 'RRR', 'RRR', 'RRR', 'RRR', 1, 1),
+(12, 'lo', 'lo', 'lo', 'lo', 2, 1),
+(13, 'lo', 'lo', 'lo', 'lo', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -94,6 +98,45 @@ CREATE TABLE `pseudo` (
   `alias` varchar(255) NOT NULL,
   `id_enseignant` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `ro`
+--
+
+CREATE TABLE `ro` (
+  `id` int(11) NOT NULL,
+  `Matiere` decimal(10,0) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `ro`
+--
+
+INSERT INTO `ro` (`id`, `Matiere`) VALUES
+(1, '12');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `systemejointure`
+--
+
+CREATE TABLE `systemejointure` (
+  `id` int(11) NOT NULL,
+  `Table1` varchar(255) NOT NULL,
+  `Champ1` varchar(255) NOT NULL,
+  `Table2` varchar(255) NOT NULL,
+  `Champ2` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `systemejointure`
+--
+
+INSERT INTO `systemejointure` (`id`, `Table1`, `Champ1`, `Table2`, `Champ2`) VALUES
+(2, 'etudiant', 'idEnseignant', 'enseignant', 'id');
 
 -- --------------------------------------------------------
 
@@ -113,12 +156,14 @@ CREATE TABLE `table` (
 --
 
 INSERT INTO `table` (`id`, `table`, `tableSysteme`, `idDroit`) VALUES
-(1, 'droit', 0, 1),
+(11, 'droit', 1, 1),
 (2, 'etudiant', 0, 1),
 (3, 'droit_utilisateur', 1, 1),
 (4, 'pseudo', 1, 1),
-(5, 'enseignant', 1, 1),
-(6, 'utilisateur', 1, 1);
+(25, 'RO', 0, 1),
+(6, 'utilisateur', 1, 1),
+(21, 'enseignant', 0, 1),
+(22, 'SystemeJointure', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -129,15 +174,16 @@ INSERT INTO `table` (`id`, `table`, `tableSysteme`, `idDroit`) VALUES
 CREATE TABLE `utilisateur` (
   `id` int(11) NOT NULL,
   `login` varchar(255) NOT NULL,
-  `mdp` varchar(255) NOT NULL
+  `mdp` varchar(255) NOT NULL,
+  `test` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Contenu de la table `utilisateur`
 --
 
-INSERT INTO `utilisateur` (`id`, `login`, `mdp`) VALUES
-(2, 'hugo', '3faf7ed52fa83d583fc670a96bcf92da270d0767');
+INSERT INTO `utilisateur` (`id`, `login`, `mdp`, `test`) VALUES
+(2, 'hugo', '3faf7ed52fa83d583fc670a96bcf92da270d0767', NULL);
 
 --
 -- Index pour les tables exportées
@@ -147,8 +193,7 @@ INSERT INTO `utilisateur` (`id`, `login`, `mdp`) VALUES
 -- Index pour la table `droit`
 --
 ALTER TABLE `droit`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `role` (`role`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `droit_utilisateur`
@@ -166,12 +211,25 @@ ALTER TABLE `enseignant`
 -- Index pour la table `etudiant`
 --
 ALTER TABLE `etudiant`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idEnseignant` (`idEnseignant`);
 
 --
 -- Index pour la table `pseudo`
 --
 ALTER TABLE `pseudo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `ro`
+--
+ALTER TABLE `ro`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `systemejointure`
+--
+ALTER TABLE `systemejointure`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -194,7 +252,7 @@ ALTER TABLE `utilisateur`
 -- AUTO_INCREMENT pour la table `droit`
 --
 ALTER TABLE `droit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT pour la table `droit_utilisateur`
 --
@@ -204,22 +262,32 @@ ALTER TABLE `droit_utilisateur`
 -- AUTO_INCREMENT pour la table `enseignant`
 --
 ALTER TABLE `enseignant`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT pour la table `etudiant`
 --
 ALTER TABLE `etudiant`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 --
 -- AUTO_INCREMENT pour la table `pseudo`
 --
 ALTER TABLE `pseudo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT pour la table `ro`
+--
+ALTER TABLE `ro`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT pour la table `systemejointure`
+--
+ALTER TABLE `systemejointure`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+--
 -- AUTO_INCREMENT pour la table `table`
 --
 ALTER TABLE `table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT pour la table `utilisateur`
 --

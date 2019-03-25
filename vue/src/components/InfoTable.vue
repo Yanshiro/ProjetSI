@@ -14,9 +14,6 @@
         <li class="nav-item">
           <a :class="DonneesActive" href="#" @click="afficheDonnees()">Données de la table</a>
         </li>
-        <li class="nav-item">
-          <a :class="ajoutDonneesActive" href="#" @click="ajouterDesDonnees()">Ajouter des données</a>
-        </li>
       </ul>
     </div>
     <div v-if="lodding" class="text-center">
@@ -53,7 +50,6 @@ export default {
       navActive: "nav-link active",
       structureActive: "nav-link active",
       DonneesActive: "nav-link",
-      ajoutDonneesActive: "nav-link",
       messageErreur: ""
     };
   },
@@ -61,18 +57,11 @@ export default {
     structureTable: Object
   },
   methods: {
-    ajouterDesDonnees() {
-      this.ajoutDonneesActive = this.navActive;
-      this.DonneesActive = this.navDesactive;
-      this.structureActive = this.navDesactive;
-    },
     afficheStructureTable() {
-      this.ajoutDonneesActive = this.navDesactive;
       this.DonneesActive = this.navDesactive;
       this.structureActive = this.navActive;
     },
     afficheDonnees() {
-      this.ajoutDonneesActive = this.navDesactive;
       this.DonneesActive = this.navActive;
       this.structureActive = this.navDesactive;
     }

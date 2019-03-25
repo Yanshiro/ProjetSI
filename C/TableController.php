@@ -1,7 +1,6 @@
 <?php
 
 include "M/Table.php";
-
 class TableController
 {
     private $table;
@@ -23,6 +22,9 @@ class TableController
             throw new Exception("Table non existant");
     }
 
+    /**
+     * Chargement des clef etranger
+     */
     public function chargeStructureEtDataEtrangere($paramGet, $paramPost)
     {
         if (isset($paramGet["table"]) && !empty($paramGet["table"])) {
@@ -55,6 +57,9 @@ class TableController
         }
     }
 
+    /**
+     * Supression d'une table
+     */
     public function deleteTable($paramGet, $paramPost)
     {
         if (isset($paramPost["table"]) && !empty($paramPost["table"])) {
@@ -64,6 +69,9 @@ class TableController
         }
     }
 
+    /**
+     * Ajouter une colonne dans une table
+     */
     public function addColonneInTable($paramGet, $paramPost)
     {
         if (isset($paramPost["table"]) && !empty($paramPost["table"])) {
@@ -97,6 +105,9 @@ class TableController
         }
     }
 
+    /**
+     * Recuperation des donnees
+     */
     public function getDonnees($paramGet, $paramPost)
     {
         if (isset($paramGet["table"]) && !empty($paramGet["table"])) {
@@ -106,6 +117,9 @@ class TableController
         }
     }
 
+    /**
+     * Supprimer une table
+     */
     public function deletData($paramGet, $paramPost)
     {
         if (
@@ -119,7 +133,7 @@ class TableController
     }
 
     /***
-     * Recuperation des possibilité de jointure sur une table
+     * Recuperation des valeur de jointure sur une table
      */
     public function chargeValueEtranger($paramGet, $paramPost)
     {
@@ -133,10 +147,40 @@ class TableController
             $cmp = 0;
             foreach ($col as $colonne) {
                 $e[$cmp] = new stdClass();
-                $e[$cmp]->colonne = $colonne->Field;
+                $e[$cmp]->colonne = $this->table->chargeStructureJointure($paramPost["table"], $colonne->Field);
                 $e[$cmp]->value =  $this->table->recuperationJointure($paramPost["table"], $colonne->Field);
+                $cmp++;
             }
         }
         echo json_encode($e);
+    }
+
+    /***
+     * Ajout des données dans la ba(se de données
+     */
+    public function addData($get, $post)
+    {
+        $listeData = json_decode($post["data"]);
+        $table = $listeData->table;
+        $listeData = $listeData->data;
+
+        if (!empty($table) && isset($table)) {
+            $structure = $this->table->getColumns($table);
+            foreach ($listeData as $data) {
+                foreach ($structure as $key => $value) {
+                    $v = $value->Field;
+                    if ((empty($data->$v) || !isset($data->$v)) && $value->Null == "NO") {
+                        throw new Exception("Champs non existant " . $key . ". dans la table " . $post["table"]);
+                    }
+                }
+                if (isset($data->id)) {
+                    unset($data->id);
+                }
+                $this->table->addDataInTable($table, $data);
+                echo json_encode($this->table->getDataTable($table));
+            }
+        } else {
+            throw new Exception(" Erreur d'ajout des données, table inconnue");
+        }
     }
 }
