@@ -19,6 +19,11 @@ class Database
 		$this->db_host = $db_host;
 	}
 
+	public function getBbName()
+	{
+		return $this->db_name;
+	}
+
 	private function getPDO()
 	{
 		if (empty($this->bdd)) {
@@ -62,19 +67,19 @@ class Database
 
 	public function prepare($stament)
 	{
-	//fonction pour suprimer ou inserer
+		//fonction pour suprimer ou inserer
 
-	//ex insertion : $req = $bdd->prepare('INSERT INTO admin(Nom, Prenom, age, Adresse_mail, Nom_utilisateur, MDP) 
-	//VALUES(?, ?, ?, ?, ?, ?)');
-	//$req->execute(array($nom, $prenom, $age, $mail, $admin, $MDP));
+		//ex insertion : $req = $bdd->prepare('INSERT INTO admin(Nom, Prenom, age, Adresse_mail, Nom_utilisateur, MDP) 
+		//VALUES(?, ?, ?, ?, ?, ?)');
+		//$req->execute(array($nom, $prenom, $age, $mail, $admin, $MDP));
 
-	//ex delete 
-	//$int = $bdd->prepare("DELETE FROM admin WHERE Nom_utilisateur= ?");
-	//$int->execute(array($sup));
+		//ex delete 
+		//$int = $bdd->prepare("DELETE FROM admin WHERE Nom_utilisateur= ?");
+		//$int->execute(array($sup));
 
-	//ex update
-	//$SELECT1 = $bdd->prepare("UPDATE affiche SET une = 0 WHERE id = ?");
-    //$SELECT1->execute(array($SELECT['id']));
+		//ex update
+		//$SELECT1 = $bdd->prepare("UPDATE affiche SET une = 0 WHERE id = ?");
+		//$SELECT1->execute(array($SELECT['id']));
 
 		return $req = $this->getPDO()->prepare($stament);
 	}
