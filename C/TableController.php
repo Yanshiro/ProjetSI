@@ -183,8 +183,26 @@ class TableController
             }
             echo json_encode($this->table->getDataTable($table));
         } else {
-            throw new Exception(" Erreur d'ajout des données, table incon
-nue");
+            throw new Exception(" Erreur d'ajout des données, table inconnue");
+        }
+    }
+
+    /**
+     * Update d'une donnees existante
+     */
+    public function updateData($get, $post)
+    {
+        $table = $post["table"];
+        $data = json_decode($post["data"]);
+        if (isset($data->id)) {
+            $id = $data->id;
+            unset($data->id);
+            if (isset($data) && !empty($data) && isset($table) && !empty($data)) {
+                $this->table->updateData($table, $data, $id);
+                echo json_encode($this->table->getDataTable($table));
+            }
+        } else {
+            throw new Exception("Id de l'objet inconnue");
         }
     }
 }

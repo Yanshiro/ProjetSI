@@ -1,8 +1,12 @@
 <template>
   <div id="AjoutDonnees">
-    <h2>Ajouter des données {{this.$route.params.table}}</h2>
+    <h2>Ajouter des données dans la table {{this.$route.params.table}}</h2>
+    <hr>
+    <h3>Ajout des données avec un fichier csv</h3>
     <AddDonneesCSV :structureTable="structureTable" v-if="structureTable.length > 0"></AddDonneesCSV>
     <!-- donnees csv -->
+    <hr>
+    <h3>Ajout des données manuellement</h3>
     <div class="form-group DivNbDataAouter">
       <label for="nbDataAouter">Nombre de données a ajouter</label>
       <input
@@ -25,7 +29,7 @@
         </label>
         <input
           v-if="col.Extra != 'auto_increment' && col.Key != 'MUL'"
-          :type="verifType(col.Type)"
+          :type="$getTypeChampsInputBySQL(col.Type)"
           :placeholder="col.Field"
           class="form-control"
           @input="loadDataInForm(index, col.Field, $event.target.value)"
@@ -45,7 +49,7 @@
         <input
           v-else
           disabled
-          :type="verifType(col.Type)"
+          :type="$getTypeChampsInputBySQL(col.Type)"
           name
           :placeholder="col.Field"
           class="form-control"
@@ -111,14 +115,6 @@ export default {
       let obj = this.arrayForm[index];
       obj[colonne] = value;
       this.arrayForm[index] = obj;
-    },
-    // Verification des type de champs input
-    verifType(type) {
-      var int = /[int]/;
-      if (type.match(int)) {
-        return "number";
-      }
-      return "text";
     },
     // Chargement des valeurs de clef etranger
     chargeDataClefEtranger(col) {

@@ -36,7 +36,13 @@ const router = new VueRouter({
 
 
 Vue.prototype.$urlApi = "http://127.0.0.1/addsite/ProjetSI/ProjetSIGit/"
-
+Vue.prototype.$getTypeChampsInputBySQL = function (typeSql) {
+  var int = /[int]/;
+  if (typeSql.match(int)) {
+    return "number";
+  }
+  return "text";
+}
 new Vue({
   router,
   render: h => h(require('./App.vue').default),

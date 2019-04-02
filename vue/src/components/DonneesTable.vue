@@ -1,5 +1,70 @@
 <template>
   <div id="DonnneesTable">
+    <modal
+      v-if="objectModif != {}"
+      :adaptive="true"
+      :draggable="true"
+      height="auto"
+      :scrollable="true"
+      :name="nameModal"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col 12">
+            <form>
+              <div
+                class="form-group"
+                v-for="(col, indexColonne) in structureTable"
+                :key="indexColonne"
+              >
+                <label>
+                  {{col.Field}}
+                  <p
+                    v-if="col.Null == 'NO'"
+                  >(Champ obligatoire{{col.Extra == "" ? "" : ", " + col.Extra}})</p>
+                  <p v-else>(Champs pas obligatoire {{col.Extra == "" ? "jnlk" : col.Extra}})</p>
+                </label>
+                <input
+                  v-if="col.Extra != 'auto_increment' && col.Key != 'MUL'"
+                  :type="$getTypeChampsInputBySQL(col.Type)"
+                  :placeholder="col.Field"
+                  class="form-control"
+                  :value="objectModif[col.Field]"
+                  v-model="objectModif[col.Field]"
+                >
+                <select
+                  class="form-control"
+                  v-else-if="col.Key == 'MUL'"
+                  v-model="objectModif[col.Field]"
+                >
+                  <option>Choisir une valeur</option>
+                  <option
+                    :value="prop.id"
+                    v-for="(prop, index) in chargeDataClefEtranger(col)"
+                    :key="index"
+                  >{{prop}}</option>
+                </select>
+                <input
+                  v-else
+                  disabled
+                  :type="$getTypeChampsInputBySQL(col.Type)"
+                  name
+                  :placeholder="col.Field"
+                  class="form-control"
+                  v-model="objectModif[col.Field]"
+                  :value="objectModif[col.Field]"
+                >
+              </div>
+              <button
+                @click.prevent="modifDonnes(objectModif)"
+                class="btn btn-success"
+              >Modifier la donnée</button>
+              <button @click.prevent="hideModal()" class="btn btn-danger">Fermer la modal</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </modal>
     <table class="table center" v-if="finChargementCleEtranger == true">
       <thead>
         <tr>
@@ -14,13 +79,12 @@
             <p v-else>{{chargeDataEtranger(colonne.Field, dataDonne[colonne.Field])}}</p>
           </td>
           <td>
-            <button class="btn btn-info">Modification</button>
+            <button class="btn btn-info" @click="modification(dataDonne)">Modification</button>
             <button class="btn btn-danger" @click="suppressionData(dataDonne)">Suppression</button>
           </td>
         </tr>
       </tbody>
     </table>
-
     <AjoutDonnees
       v-if="finChargementCleEtranger == true"
       :arrayCleEtranger="arrayCleEtranger"
@@ -42,7 +106,9 @@ export default {
       structureTable: [],
       arrayCleEtranger: [],
       controller: "TableController",
-      finChargementCleEtranger: false
+      finChargementCleEtranger: false,
+      nameModal: "ModificationModal",
+      objectModif: {}
     };
   },
   computed: {
@@ -150,6 +216,40 @@ export default {
         e => e[indexTable.colonne.Champ2] == valeur
       );
       return val;
+    },
+    modification(dataModification) {
+      this.objectModif = dataModification;
+      this.$modal.show(this.nameModal);
+    },
+    // Modifie la données dans la base de données
+    modifDonnes(data) {
+      let dataSend = new FormData();
+      dataSend.append("data", JSON.stringify(data));
+      dataSend.append("table", this.$route.params.table);
+      this.$http
+        .post(
+          this.$urlApi + "?controller=" + this.controller + "&f=updateData",
+          dataSend
+        )
+        .then(response => {
+          store.commit("setData", response.data);
+        })
+        .catch(error => {
+          this.$parent.messageErreur = error.body;
+        })
+        .then(() => {
+          this.hideModal();
+        });
+    },
+
+    // Chargement des valeurs de clef etranger
+    chargeDataClefEtranger(col) {
+      return this.arrayCleEtranger.filter(e => e.colonne.Champ1 == col.Field)[0]
+        .value;
+    },
+    hideModal() {
+      this.$modal.hide(this.nameModal);
+      this.objectModif = {};
     }
   }
 };

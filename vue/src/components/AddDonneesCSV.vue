@@ -13,7 +13,7 @@
         <button class="btn btn-success" @click="AddData()">Ajouter dans la base de données</button>
         <button class="btn btn-danger" @click="annulerImport()">Annuler l'import csv</button>
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="bar de recherche" v-model="search">
+          <input type="text" class="form-control" placeholder="barre de recherche" v-model="search">
           <small
             id="helpId"
             class="text-muted"

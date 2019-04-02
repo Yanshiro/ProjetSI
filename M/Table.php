@@ -257,7 +257,26 @@ class Table
             $req = $this->bdd->prepare("INSERT INTO " . $table . $index . " VALUES" . $interogation);
             $req->execute($value);
         } else {
+            throw new Exception("Table inconnue");
+        }
+    }
 
+    /**
+     * Update d'une data dans la base de données
+     */
+    public function updateData($table, $data, $id)
+    {
+        $value = array();
+        $update = null;
+        if ($this->existTable($table)) {
+            foreach ($data as $key => $v) {
+                array_push($value, $v);
+                $update .= $key . " = ?, ";
+            }
+            $update = substr($update, 0, -2);
+            $req = $this->bdd->prepare("UPDATE  " . $table . " SET " . $update . " where id = " . $id);
+            $req->execute($value);
+        } else {
             throw new Exception("Table inconnue");
         }
     }
