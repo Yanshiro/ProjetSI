@@ -1,22 +1,27 @@
 <?php 
+
 /**
  * Connection a la base de donnée
  */
 
 class Database
 {
+
 	private $db_host;
 	private $db_name;
 	private $db_pass;
 	private $db_user;
 	private $bdd;
 
-	function __construct($db_name = 'projetsi6', $db_user = 'root', $db_pass = "", $db_host = 'localhost')
+	function __construct($fileConfigJson = "config.json")
 	{
-		$this->db_name = $db_name;
-		$this->db_user = $db_user;
-		$this->db_pass = $db_pass;
-		$this->db_host = $db_host;
+		$fileConfig = file_get_contents($fileConfigJson);
+		$config = json_decode($fileConfig);
+
+		$this->db_name = $config->name;
+		$this->db_user = $config->user;
+		$this->db_pass = $config->password;
+		$this->db_host = $config->host;
 	}
 
 	public function getBbName()
