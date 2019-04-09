@@ -34,7 +34,7 @@
                 >
                 <select
                   class="form-control"
-                  v-else-if="col.Key == 'MUL'"
+                  v-else-if="col.Key == 'MUL' && arrayCleEtranger.length > 0 "
                   v-model="objectModif[col.Field]"
                 >
                   <option>Choisir une valeur</option>
@@ -123,7 +123,8 @@ export default {
   },
   methods: {
     chargementLienTable() {
-      this.arrayCleEtranger = this.structureTable.filter(e => e.Key == "MUL");
+      // this.arrayCleEtranger = this.structureTable.filter(e => e.Key == "MUL");
+      let cleEtranger = this.structureTable.filter(e => e.Key == "MUL");
       let url =
         this.$urlApi +
         "?controller=" +
@@ -132,7 +133,7 @@ export default {
 
       let data = new FormData();
       data.append("table", this.$route.params.table);
-      data.append("colonnes", JSON.stringify(this.arrayCleEtranger));
+      data.append("colonnes", JSON.stringify(cleEtranger));
 
       this.$http
         .post(url, data, {
