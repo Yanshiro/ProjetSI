@@ -1,6 +1,5 @@
 {
-    "host": "localhost",
-    "name": "projetsi6",
     "user": "root",
-    "password": ""
+    "password": "",
+    "sql": "mysql:host=localhost;dbname=projetsi6"
 }

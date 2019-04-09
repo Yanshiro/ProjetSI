@@ -7,10 +7,9 @@
 class Database
 {
 
-	private $db_host;
-	private $db_name;
 	private $db_pass;
 	private $db_user;
+	private $connSql;
 	private $bdd;
 
 	function __construct($fileConfigJson = "config.json")
@@ -18,10 +17,9 @@ class Database
 		$fileConfig = file_get_contents($fileConfigJson);
 		$config = json_decode($fileConfig);
 
-		$this->db_name = $config->name;
 		$this->db_user = $config->user;
 		$this->db_pass = $config->password;
-		$this->db_host = $config->host;
+		$this->connSql = $config->sql;
 	}
 
 	public function getBbName()
@@ -33,11 +31,13 @@ class Database
 	{
 		if (empty($this->bdd)) {
 			if (!empty($this->db_pass)) {
-				$bdd = new PDO('mysql:host=' . $this->db_host . ';dbname=' . $this->db_name . ';', '' . $this->db_user . '', '' . $this->db_pass, array(
-					PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
-				));
+				{
+					$bdd = new PDO($this->connSql, '' . $this->db_user . '', '' . $this->db_pass, array(
+						PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+					));
+				}
 			} else {
-				$bdd = new PDO('mysql:host=' . $this->db_host . ';dbname=' . $this->db_name . ';', '' . $this->db_user . '', '');
+				$bdd = new PDO($this->connSql, '' . $this->db_user . '', '', null);
 			}
 			$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->bdd = $bdd;
