@@ -1,5 +1,6 @@
 {
     "user": "root",
     "password": "",
-    "sql": "mysql:host=localhost;dbname=projetsi6"
+    "sql": "mysql:host=localhost;dbname=projetsi6",
+    "db_name": "projetsi6"
 }

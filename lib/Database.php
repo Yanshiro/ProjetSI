@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Connection a la base de donnée
@@ -11,6 +11,7 @@ class Database
 	private $db_user;
 	private $connSql;
 	private $bdd;
+	private $db_name;
 
 	function __construct($fileConfigJson = "config.json")
 	{
@@ -20,6 +21,7 @@ class Database
 		$this->db_user = $config->user;
 		$this->db_pass = $config->password;
 		$this->connSql = $config->sql;
+		$this->db_name = $config->db_name
 	}
 
 	public function getBbName()
@@ -30,8 +32,7 @@ class Database
 	private function getPDO()
 	{
 		if (empty($this->bdd)) {
-			if (!empty($this->db_pass)) {
-				{
+			if (!empty($this->db_pass)) { {
 					$bdd = new PDO($this->connSql, '' . $this->db_user . '', '' . $this->db_pass, array(
 						PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
 					));
