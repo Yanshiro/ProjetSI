@@ -21,7 +21,7 @@ class Database
 		$this->db_user = $config->user;
 		$this->db_pass = $config->password;
 		$this->connSql = $config->sql;
-		$this->db_name = $config->db_name
+		$this->db_name = $config->db_name;
 	}
 
 	public function getBbName()

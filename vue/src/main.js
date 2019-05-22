@@ -7,6 +7,7 @@ import VueResource from 'vue-resource'
 import axios from "axios";
 import VModal from 'vue-js-modal'
 
+
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
