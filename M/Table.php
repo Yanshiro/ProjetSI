@@ -1,4 +1,4 @@
-<?php 
+<?php
 include "M/TableJointure.php";
 class Table
 {
@@ -8,13 +8,31 @@ class Table
     {
         $this->bdd = new Database();
         $this->jointure = new TableJointure();
+
+        if ($this->existeTableInDataBase("Table") == false) {
+            $this->CreateTableSysteme();
+        }
+
+        $this->createTableJointure();
     }
 
     public function getAllTable()
     {
+        if ($this->existeTableInDataBase("Table") == false) {
+            $this->CreateTableSysteme();
+        }
         $req = $this->bdd->prepare("select * from `table`");
         $req->execute();
         return $req->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Table permettant de référencer toutes les tables de l'application
+     */
+    public function CreateTableSysteme()
+    {
+        $req = $this->bdd->prepare("CREATE TABLE `Table`  (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT , `table` varchar(255) not null, tableSysteme  tinyint(1) not null, idDroit int(11))");
+        $req->execute();
     }
 
     /**
@@ -26,6 +44,7 @@ class Table
         $req->execute(array($nameTable));
         return $req->fetch(PDO::FETCH_OBJ);
     }
+
 
     public function existeTableInDataBase($nameTable)
     {
@@ -84,7 +103,7 @@ class Table
      */
     public function getColumnByName($tableName, $nameColumns)
     {
-        if ($this->existTable($tableName)) {
+        if ($this->existeTableInDataBase($tableName)) {
             $req = $this->bdd->prepare("SHOW COLUMNS FROM " . $tableName . " where FIELD = ?");
             $req->execute(array($nameColumns));
             return $req->fetch(PDO::FETCH_OBJ);
@@ -105,7 +124,7 @@ class Table
             $col = htmlspecialchars($col);
             $req = $this->bdd->prepare("ALTER TABLE " . $table . " DROP COLUMN " . $col);
             $req->execute();
-            if ($colonne->Key = "MUL") {
+            if ($colonne->Key == "MUL") {
                 $this->suprimerJointure($table, $col);
             }
         }
@@ -126,7 +145,7 @@ class Table
     /**
      * Ajouter une colonne à une table
      */
-    public function addColonne($TableInfoTable)
+    public function addColonne($TableInfoTable, $tableSysteme = false)
     {
         $colonne = htmlspecialchars($TableInfoTable["Column"]);
         $type = htmlspecialchars($TableInfoTable["Type"]);
@@ -147,7 +166,7 @@ class Table
             $type = "int";
         }
 
-        if ($this->existTable($table) != false) {
+        if (($tableSysteme = true && $this->existeTableInDataBase($table)) ||  $this->existTable($table) != false) {
             $reqString = "ALTER TABLE " . $table . " ADD " . $colonne . " " . $type . " " . $champsNullable . " " . $default;
             $req = $this->bdd->prepare($reqString);
             $req->execute();
@@ -168,23 +187,7 @@ class Table
     public function addJointure($table1, $champ1, $table2, $champ2)
     {
         if ($this->existTable($table1) != false && $this->existTable($table2) != false) {
-            if ($this->existeTableInDataBase(TableJointure::$SystemeJointure) == false) {
-                $this->createTable(TableJointure::$SystemeJointure, true);
 
-                for ($i = 1; $i < 3; $i++) {
-                    $col["table"] = TableJointure::$SystemeJointure;
-                    $col["Column"] = "Table" . $i;
-                    $col["Type"] = "varchar(255)";
-                    $col["Nullable"] = "NO";
-                    $this->addColonne($col);
-
-                    $col["table"] = TableJointure::$SystemeJointure;
-                    $col["Column"] = "Champ" . $i;
-                    $col["Type"] = "varchar(255)";
-                    $col["Nullable"] = "NO";
-                    $this->addColonne($col);
-                }
-            }
             $req = $this
                 ->bdd
                 ->prepare(
@@ -195,6 +198,27 @@ class Table
             $this->jointure->addJointure($table1, $champ1, $table2, $champ2);
         } else {
             throw new Exception("Erreur table inconnue");
+        }
+    }
+
+    public function createTableJointure()
+    {
+        if ($this->existeTableInDataBase(TableJointure::$SystemeJointure) == false) {
+            $this->createTable(TableJointure::$SystemeJointure, true);
+
+            for ($i = 1; $i < 3; $i++) {
+                $col["table"] = TableJointure::$SystemeJointure;
+                $col["Column"] = "Table" . $i;
+                $col["Type"] = "varchar(255)";
+                $col["Nullable"] = "NO";
+                $this->addColonne($col, true);
+
+                $col["table"] = TableJointure::$SystemeJointure;
+                $col["Column"] = "Champ" . $i;
+                $col["Type"] = "varchar(255)";
+                $col["Nullable"] = "NO";
+                $this->addColonne($col, true);
+            }
         }
     }
 

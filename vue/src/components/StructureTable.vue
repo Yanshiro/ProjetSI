@@ -32,7 +32,7 @@
                 @click="loadTable()"
               >
                 <option value="int">Int</option>
-                <option value="decimal">decimal</option>
+                <option value="decimal(10, 2)">decimal</option>
                 <option value="varchar(255)">Chaine de caractere</option>
                 <option value="char">Caractere</option>
                 <option value="date">date</option>

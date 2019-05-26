@@ -6,6 +6,7 @@
     <AddDonneesCSV :structureTable="structureTable" v-if="structureTable.length > 0"></AddDonneesCSV>
     <!-- donnees csv -->
     <hr>
+    <messageErreur v-if="messageErreur != ''" :message="messageErreur"></messageErreur>
     <h3>Ajout des données manuellement</h3>
     <div class="form-group DivNbDataAouter">
       <label for="nbDataAouter">Nombre de données a ajouter</label>
@@ -25,7 +26,7 @@
         <label>
           {{col.Field}}
           <p v-if="col.Null == 'NO'">(Champ obligatoire{{col.Extra == "" ? "" : ", " + col.Extra}})</p>
-          <p v-else>(Champs pas obligatoire {{col.Extra == "" ? "jnlk" : col.Extra}})</p>
+          <p v-else>(Champs pas obligatoire {{col.Extra == "" ? "" : col.Extra}})</p>
         </label>
         <input
           v-if="col.Extra != 'auto_increment' && col.Key != 'MUL'"
@@ -67,7 +68,7 @@
 import store from "./../store/store.js";
 import vuex from "vuex";
 import AddDonneesCSV from "./AddDonneesCSV";
-
+import messageErreur from "./MessageErreur";
 export default {
   store,
   props: {
@@ -80,11 +81,13 @@ export default {
       nbLigne: 1,
       arrayForm: [],
       arrayTableValeurColonne: [],
-      controller: "TableController"
+      controller: "TableController",
+      messageErreur: ""
     };
   },
   components: {
-    AddDonneesCSV
+    AddDonneesCSV,
+    messageErreur
   },
   computed: {
     ...vuex.mapGetters(["data"])
@@ -158,7 +161,7 @@ export default {
           this.nbLigne--;
         })
         .catch(error => {
-          this.$parent.messageErreur = error.body;
+          this.messageErreur = error.body;
         });
     }
   }

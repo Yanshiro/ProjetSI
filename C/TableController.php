@@ -173,7 +173,14 @@ class TableController
                         throw new Exception("Champs non existant " . $key . ". dans la table " . $post["table"]);
                     }
                     if (preg_match("/[ int]/", $value->Type) && $value->Field != "id") {
-                        $data->$v = intval($data->$v);
+                        if (is_numeric($data->$v)) {
+                            $data->$v = date('d/M/Y', $data->$v);
+                        } else {
+                            throw new Exception("Erreur le Type doit être un " . $value->Type . " pour la colonne " . $value->Field);
+                        }
+                    }
+                    if (preg_match("/[ date]/", $value->Type)) {
+                        $data->$v = floatval($data->$v);
                     }
                 }
                 if (isset($data->id)) {
