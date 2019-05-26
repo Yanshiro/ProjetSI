@@ -179,7 +179,7 @@ class TableController
                             throw new Exception("Erreur le Type doit être un " . $value->Type . " pour la colonne " . $value->Field);
                         }
                     }
-                    if (preg_match("/[ date]/", $value->Type)) {
+                    if ("date" == $value->Type) {
                         $data->$v = floatval($data->$v);
                     }
                 }
